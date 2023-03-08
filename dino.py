@@ -6,7 +6,7 @@ from stable_baselines3.common import env_checker
 from stable_baselines3 import DQN
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.vec_env import DummyVecEnv, VecFrameStack
-
+from stable_baselines3 import PPO
 import pyautogui
 # import pydirectinput
 import pytesseract
@@ -125,16 +125,14 @@ class TrainAndLoggingCallback(BaseCallback):
 CHECKPOINT_DIR = './train/'
 LOG_DIR = './logs/'
 
-
 callback = TrainAndLoggingCallback(check_freq=1000, save_path=CHECKPOINT_DIR)
 
-
 env = webgame()
-model = DQN('CnnPolicy', env, tensorboard_log=LOG_DIR, verbose=1, buffer_size=1200000, learning_starts=1000)
+model = PPO('MlpPolicy', env, tensorboard_log=LOG_DIR, verbose=1, buffer_size=1200000, learning_starts=1000)
 model.learn(total_timesteps=100000, callback=callback)
-model.load('train_first/best_mode l_50000')
-model=DQN.load(os.path.join('train_first','best_model_88000'))
+model.save(os.path.join('train_first', 'best_model'))
 
+model = PPO.load(os.path.join('train_first', 'best_model'))
 
 for episode in range(5):
     obs = env.reset()
@@ -147,4 +145,3 @@ for episode in range(5):
         total_reward += reward
     print('Total Reward for episode {} is {}'.format(episode, total_reward))
     # time.sleep(2)
-
